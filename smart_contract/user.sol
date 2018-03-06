@@ -8,15 +8,14 @@
 
 pragma solidity ^0.4.0;
 
-
 /* contract userInterface */
 contract userInterface {
-    //address owner;
+    address owner;
     
     /* struct user */
     struct User {
         uint256 ownerId;
-        address ownerAddress;
+        address ownerPublicKey;
     }
     
     /* mapping address => struct User */
@@ -24,19 +23,19 @@ contract userInterface {
     address [] addressUsers;
     
     /* event AddUser on blockchain */
-    event AddUser(uint256 _ownerId, address _ownerAddress);
+    event AddUser(uint256 _ownerId, address _ownerPublicKey);
     
     /* function add a User 
-        @ param _ownerAddress address of user added
+        @ param _ownerPublicKey address of user added
         @ return 'true' if success or 'false' if 'false'
     */
-    function addUser () public payable returns (bool);
+    function addUser (address _ownerPublicKey) public payable returns (bool);
     
     /* function get information a User
-        @ param _ownerAddress address of user want get information
-        @ return ownerId and address of user want get information
+        @ param _ownerPublicKey address of user want get information
+        @ return ownerId and ownerPublicKey of user want get information
     */
-    function getUser (address _ownerAddress) public constant returns (uint256, address);
+    function getUser (address _ownerPublicKey) public constant returns (uint256, address);
     
     /* function get length array user */
     function lengthUser () public constant returns (uint256);
@@ -49,25 +48,28 @@ contract userInterface {
 contract user is userInterface {
     
     /* function add User */
-    function addUser () 
+    function addUser (address _ownerPublicKey) 
     public payable returns (bool) {
-        User storage _user = users[msg.sender];
+        User storage _user = users[_ownerPublicKey];
         uint256 _ownerId = addressUsers.length;
         
         _user.ownerId = _ownerId;
-        _user.ownerAddress = msg.sender;
+        _user.ownerPublicKey = _ownerPublicKey;
         
-        addressUsers.push(msg.sender);
-        AddUser(_ownerId, msg.sender);
+        addressUsers.push(_ownerPublicKey);
+        AddUser(_ownerId, _ownerPublicKey);
         return true;
     }
     
     /* function get information a user */
-    function getUser (address _ownerAddress) 
-    public constant returns (uint256, address) {
+    function getUser (address _ownerPublicKey) 
+    public constant returns (
+        uint256 ownerId, 
+        address ownerPublicKey
+    ) {
         return (
-            users[_ownerAddress].ownerId,
-            users[_ownerAddress].ownerAddress
+            users[_ownerPublicKey].ownerId,
+            users[_ownerPublicKey].ownerPublicKey
         );
     }
     
@@ -82,6 +84,5 @@ contract user is userInterface {
     }
 
 }
-
 
 
