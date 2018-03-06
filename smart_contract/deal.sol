@@ -1,6 +1,6 @@
 /*
 @ Filename : deal.sol
-@ Author :
+@ Author : 
 @ Date Code : 
 
 @ function : use store infomation of deal and answer
@@ -71,13 +71,22 @@ contract dealInterface {
     /* function get length of all deal */
     function lengthDeals () public constant returns (uint256);
     
-    /* function get information of a deal */
+    /* function get information of a deal 
+        @ param _dealId id of a deal
+        @ return dealId id of dealId
+                 encPublicKey encrypt public Key
+                 nonce nonce use encrypted
+                 docListEnc list document encrypt
+                 price price customer payable
+                 expiredTime deathline of deal
+    */
     function getDeal (uint256 _dealId) public constant returns (
-        bytes32 _encPublicKey,
-        bytes32 _nonce,
-        bytes32 _docListEnc,
-        uint256 _price,
-        uint256 _expiredTime
+        uint256 dealId,
+        bytes32 encPublicKey,
+        bytes32 nonce,
+        bytes32 docListEnc,
+        uint256 price,
+        uint256 expiredTime
     );
     
     
@@ -95,13 +104,21 @@ contract dealInterface {
         uint256 _encDocId
     ) public payable returns (bool);
     
-    /* function get answer of a user */
+    /* function get information answer of a user 
+        @ param _answerId id of answer get information
+        @ return answerId id of answerId
+                 dealId id of deal
+                 answer answer of user
+                 ownerId id of owner buy information
+                 encDocId id of encrypt document 
+    */
     function getAnswer (uint256 _answerId) 
     public constant returns (
-        uint256 _dealId,
-        bool _answer, 
-        uint256 _ownerId, 
-        uint256 _encDocId
+        uint256 answerId,
+        uint256 dealId,
+        bool answer, 
+        uint256 ownerId, 
+        uint256 encDocId
     );
     
     /* function get leng of all answers */
@@ -153,16 +170,18 @@ contract deal is dealInterface {
     
     /* function get information of a deal */
     function getDeal (uint256 _dealId) public constant returns (
-        bytes32 _encPublicKey,
-        bytes32 _nonce,
-        bytes32 _docListEnc,
-        uint256 _price,
-        uint256 _expiredTime
+        uint256 dealId,
+        bytes32 encPublicKey,
+        bytes32 nonce,
+        bytes32 docListEnc,
+        uint256 price,
+        uint256 expiredTime
     ) {
         /* check */
         require (_dealId < deals.length);
         
         return (
+            deals[_dealId].dealId,
             deals[_dealId].encPublicKey,
             deals[_dealId].nonce,
             deals[_dealId].docListEnc,
@@ -204,15 +223,17 @@ contract deal is dealInterface {
     /* function get answer of a user */
     function getAnswer (uint256 _answerId) 
     public constant returns (
-        uint256 _dealId,
-        bool _answer, 
-        uint256 _ownerId, 
-        uint256 _encDocId
+        uint256 answerId,
+        uint256 dealId,
+        bool answer, 
+        uint256 ownerId, 
+        uint256 encDocId
     ) {
         /* check */
         require (_answerId < answers.length);
         
         return (
+            answers[_answerId].answerId,
             answers[_answerId].dealId,
             answers[_answerId].answer,
             answers[_answerId].ownerId,
