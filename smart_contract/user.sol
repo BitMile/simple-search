@@ -10,45 +10,44 @@ pragma solidity ^0.4.0;
 
 /* contract userInterface */
 contract userInterface {
-    address owner;
     
     /* struct user */
     struct User {
         uint256 ownerId;
-        address ownerPublicKey;
+        bytes32 ownerPublicKey;
     }
     
-    /* mapping address => struct User */
-    mapping (address => User) users;
-    address [] addressUsers;
+    /* mapping bytes32 => struct User */
+    mapping (bytes32 => User) users;
+    bytes32 [] addressUsers;
     
     /* event AddUser on blockchain */
-    event AddUser(uint256 _ownerId, address _ownerPublicKey);
+    event AddUser(uint256 _ownerId, bytes32 _ownerPublicKey);
     
     /* function add a User 
-        @ param _ownerPublicKey address of user added
+        @ param _ownerPublicKey public key of user added
         @ return 'true' if success or 'false' if 'false'
     */
-    function addUser (address _ownerPublicKey) public payable returns (bool);
+    function addUser (bytes32 _ownerPublicKey) public payable returns (bool);
     
     /* function get information a User
-        @ param _ownerPublicKey address of user want get information
+        @ param _ownerPublicKey puclicKey of user want get information
         @ return ownerId and ownerPublicKey of user want get information
     */
-    function getUser (address _ownerPublicKey) public constant returns (uint256, address);
+    function getUser (bytes32 _ownerPublicKey) public constant returns (uint256, bytes32);
     
     /* function get length array user */
     function lengthUser () public constant returns (uint256);
     
     /* function get address all users */
-    function getAllUser () public constant returns (address[]);
+    function getAllUser () public constant returns (bytes32[]);
 }
 
 /* contract user */
 contract user is userInterface {
     
     /* function add User */
-    function addUser (address _ownerPublicKey) 
+    function addUser (bytes32 _ownerPublicKey) 
     public payable returns (bool) {
         User storage _user = users[_ownerPublicKey];
         uint256 _ownerId = addressUsers.length;
@@ -62,10 +61,10 @@ contract user is userInterface {
     }
     
     /* function get information a user */
-    function getUser (address _ownerPublicKey) 
+    function getUser (bytes32 _ownerPublicKey) 
     public constant returns (
         uint256 ownerId, 
-        address ownerPublicKey
+        bytes32 ownerPublicKey
     ) {
         return (
             users[_ownerPublicKey].ownerId,
@@ -79,10 +78,11 @@ contract user is userInterface {
     }
     
     /* function get address of all users */
-    function getAllUser () public constant returns (address[]) {
+    function getAllUser () public constant returns (bytes32[]) {
         return addressUsers;
     }
 
 }
+
 
 
