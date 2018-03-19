@@ -15,9 +15,9 @@ contract dealInterface {
     struct Deal {
         uint256 dealId;
         bytes32 encPublicKey;
-        bytes32 nonce;
-        uint256 [] ownerIds;
-        uint256 [] encDocIds;
+        address [] ownerIds;
+        bytes32 [] encDocIds;
+        bytes32 nonce;        
         uint256 price;
         uint256 expiredTime;
     }
@@ -26,8 +26,8 @@ contract dealInterface {
     struct Answer {
         uint256 answerId;
         uint256 dealId;
-        uint256 [] ownerIds;
-        uint256 [] encDocIds;
+        address [] ownerIds;
+        bytes32 [] encDocIds;
         bool [] answerUsers;
     }
     
@@ -60,18 +60,18 @@ contract dealInterface {
     event CreateDeal (
         uint256 _dealId,
         bytes32 _encPublicKey,
-        uint256 [] _ownerIds,
-        uint256 [] _encDocIds,
         bytes32 _nonce,
         uint256 _price,
-        uint256 _expiredTime
+        uint256 _expiredTime,
+        address [] _ownerIds,
+        bytes32 [] _encDocIds
     );
     
     /* event update answer of user and push on block chain */
     event AnswerUser (
         uint256 _dealId,
-        uint256 _ownerId,
-        uint256 _encDocId,
+        address _ownerId,
+        bytes32 _encDocId,
         bool _answerUser
     );
     
@@ -94,16 +94,16 @@ contract dealInterface {
     */
     function createDeal (
         bytes32 _encPublicKey,
-        uint256 [] ownerIds,
-        uint256 [] encDocIds,
         bytes32 _nonce,
         uint256 _price,
-        uint256 _expiredTime
+        uint256 _expiredTime,
+        address [] ownerIds,
+        bytes32 [] encDocIds
     ) public payable returns (bool);
     
     
     /* function get length of all deal */
-    function lengthDeals () public constant returns (uint256);
+    function lengthDeal () public constant returns (uint256);
     
     
     /* function get information of a deal 
@@ -118,8 +118,8 @@ contract dealInterface {
     function getDeal (uint256 _dealId) public constant returns (
         uint256 dealId,
         bytes32 encPublicKey,
-        uint256 [] ownerIds,
-        uint256 [] encDocIds,
+        address [] ownerIds,
+        bytes32 [] encDocIds,
         bytes32 nonce,
         uint256 price,
         uint256 expiredTime
@@ -144,8 +144,8 @@ contract dealInterface {
     */
     function updateAnswer (
         uint256 _dealId,
-        uint256 _ownerId,
-        uint256 _encDocId,
+        address _ownerId,
+        bytes32 _encDocId,
         bool _answerUser
     ) public payable returns (bool); 
     
@@ -162,8 +162,8 @@ contract dealInterface {
     public constant returns (
         uint256 answerId,
         uint256 dealId,
-        uint256[] ownerIds, 
-        uint256[] encDocIds,
+        address [] ownerIds, 
+        bytes32 [] encDocIds,
         bool[] answerUsers 
     );
     
@@ -263,11 +263,11 @@ contract deal is dealInterface {
     /* function create a deal */
     function createDeal (
         bytes32 _encPublicKey,
-        uint256 [] _ownerIds,
-        uint256 [] _encDocIds,
         bytes32 _nonce,
         uint256 _price,
-        uint256 _expiredTime
+        uint256 _expiredTime,
+        address [] _ownerIds,
+        bytes32 [] _encDocIds
     ) public payable returns (bool) {
         /* check */
         require (_expiredTime > now);
@@ -292,11 +292,11 @@ contract deal is dealInterface {
         emit CreateDeal (
             _dealId,
             _encPublicKey,
-            _ownerIds,
-            _encDocIds,
             _nonce,
             _price,
-            _expiredTime
+            _expiredTime,
+            _ownerIds,
+            _encDocIds
         );
         /* success return true */
         return true;
@@ -304,7 +304,7 @@ contract deal is dealInterface {
     
     
     /* function get length of all deal */
-    function lengthDeals () public constant returns (uint256) {
+    function lengthDeal () public constant returns (uint256) {
         return deals.length;
     }
     
@@ -313,8 +313,8 @@ contract deal is dealInterface {
     function getDeal (uint256 _dealId) public constant returns (
         uint256 dealId,
         bytes32 encPublicKey,
-        uint256 [] ownerIds,
-        uint256 [] encDocIds,
+        address [] ownerIds,
+        bytes32 [] encDocIds,
         bytes32 nonce,
         uint256 price,
         uint256 expiredTime
@@ -355,8 +355,8 @@ contract deal is dealInterface {
     /* function update answer of user into deal */
     function updateAnswer (
         uint256 _dealId,
-        uint256 _ownerId,
-        uint256 _encDocId,
+        address _ownerId,
+        bytes32 _encDocId,
         bool _answerUser
     ) public payable returns (bool) {
         require (_dealId < deals.length);
@@ -379,8 +379,8 @@ contract deal is dealInterface {
     public constant returns (
         uint256 answerId,
         uint256 dealId,
-        uint256[] ownerId, 
-        uint256[] encDocId,
+        address [] ownerId, 
+        bytes32 [] encDocId,
         bool[] answerUser
     ) {
         /* check */
